@@ -1,0 +1,4 @@
+interface:
+  display_name: "Offer Skill"
+  short_description: "Dual-perspective interview and hiring helper"
+  default_prompt: "Use $offer-skill to evaluate a resume or extract project highlights for a target role."

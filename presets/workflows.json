@@ -1,0 +1,34 @@
+{
+  "project-highlight": {
+    "display_name": "Project Highlight",
+    "status": "enabled",
+    "enabled_in_v0_1": true,
+    "required_inputs": ["projects"],
+    "optional_inputs": ["resume", "jd"],
+    "deferred_note": ""
+  },
+  "resume-eval": {
+    "display_name": "Resume Evaluation",
+    "status": "enabled",
+    "enabled_in_v0_1": true,
+    "required_inputs": ["resume"],
+    "optional_inputs": ["jd", "projects"],
+    "deferred_note": ""
+  },
+  "mock-interview": {
+    "display_name": "Mock Interview",
+    "status": "planned",
+    "enabled_in_v0_1": false,
+    "required_inputs": ["jd"],
+    "optional_inputs": ["resume", "projects", "question_bank"],
+    "deferred_note": "Planned after v0.1. Do not remove from roadmap. v0.1 does not perform live web-assisted interview research."
+  },
+  "interview-retro": {
+    "display_name": "Interview Retrospective",
+    "status": "planned",
+    "enabled_in_v0_1": false,
+    "required_inputs": ["interview_notes"],
+    "optional_inputs": ["resume", "jd", "projects", "candidate_answers"],
+    "deferred_note": "Planned after v0.1. Do not remove from roadmap."
+  }
+}

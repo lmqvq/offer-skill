@@ -1,0 +1,20 @@
+{
+  "candidate": {
+    "display_name": "Candidate",
+    "status": "enabled",
+    "goal": "Help the user present stronger evidence, sharper project framing, and clearer interview preparation.",
+    "tone": "supportive"
+  },
+  "interviewer": {
+    "display_name": "Interviewer",
+    "status": "enabled",
+    "goal": "Help the user assess capability depth, match risk, and follow-up question quality.",
+    "tone": "skeptical"
+  },
+  "dual": {
+    "display_name": "Dual Perspective",
+    "status": "enabled",
+    "goal": "Show both candidate opportunity and interviewer risk side by side.",
+    "tone": "balanced"
+  }
+}
