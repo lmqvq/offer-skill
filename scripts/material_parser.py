@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local-material parsers for offer-skill v0.1."""
+"""Local-material parsers for offer-skill workflows."""
 
 from __future__ import annotations
 
@@ -71,6 +71,8 @@ PLUS_HINTS = ("preferred", "plus", "加分", "优先")
 RESPONSIBILITY_HINTS = ("responsibility", "职责", "工作内容", "you will", "负责")
 NUMBER_HINT = re.compile(r"(\d+[%+]?|\d+\s*(?:ms|s|qps|w|万|千|k|m|亿|users))", re.IGNORECASE)
 YEARS_HINT = re.compile(r"(\d+)\+?\s*(?:years?|年)", re.IGNORECASE)
+QUESTION_HINT = re.compile(r"^(?:q[:：]|question[:：]|问题[:：])\s*(.+)$", re.IGNORECASE)
+ANSWER_HINT = re.compile(r"^(?:a[:：]|answer[:：]|回答[:：])\s*(.+)$", re.IGNORECASE)
 
 
 def normalize_lines(text: str) -> list[str]:
@@ -142,15 +144,6 @@ def parse_resume_text(text: str) -> dict:
         "claims": claims,
         "raw_sections": sections,
     }
-
-
-def line_match_score(line: str, keywords: list[str]) -> int:
-    lowered = line.lower()
-    score = 0
-    for keyword in keywords:
-        if keyword.lower() in lowered:
-            score += 1
-    return score
 
 
 def parse_jd_text(text: str) -> dict:
@@ -231,6 +224,100 @@ def parse_projects_text(text: str) -> dict:
     return {
         "source_type": "projects",
         "projects": projects,
+    }
+
+
+def parse_interview_notes_text(text: str) -> dict:
+    lines = normalize_lines(text)
+    rounds = []
+    current_questions = []
+    current_question: dict | None = None
+
+    def flush_question() -> None:
+        nonlocal current_question
+        if current_question:
+            current_questions.append(current_question)
+            current_question = None
+
+    for line in lines:
+        q_match = QUESTION_HINT.match(line)
+        a_match = ANSWER_HINT.match(line)
+        if q_match:
+            flush_question()
+            current_question = {
+                "question": q_match.group(1).strip(),
+                "candidate_answer_summary": "",
+                "interviewer_response": "",
+                "confidence": "medium",
+            }
+            continue
+        if a_match and current_question:
+            answer = a_match.group(1).strip()
+            current_question["candidate_answer_summary"] = (
+                f"{current_question['candidate_answer_summary']} {answer}".strip()
+            )
+            continue
+        if ("?" in line or "？" in line) and current_question is None:
+            flush_question()
+            current_question = {
+                "question": line,
+                "candidate_answer_summary": "",
+                "interviewer_response": "",
+                "confidence": "medium",
+            }
+            continue
+        if current_question:
+            current_question["candidate_answer_summary"] = (
+                f"{current_question['candidate_answer_summary']} {line}".strip()
+            )
+
+    flush_question()
+    if current_questions:
+        rounds.append({
+            "round_name": "default-round",
+            "questions": current_questions,
+        })
+
+    return {
+        "source_type": "interview_notes",
+        "rounds": rounds,
+        "raw_lines": lines,
+    }
+
+
+def parse_candidate_answers_text(text: str) -> dict:
+    lines = normalize_lines(text)
+    answers = []
+    current_question = ""
+    current_answer_parts: list[str] = []
+
+    def flush_answer() -> None:
+        nonlocal current_question, current_answer_parts
+        if current_question or current_answer_parts:
+            answers.append({
+                "question": current_question,
+                "answer": " ".join(current_answer_parts).strip(),
+            })
+        current_question = ""
+        current_answer_parts = []
+
+    for line in lines:
+        q_match = QUESTION_HINT.match(line)
+        a_match = ANSWER_HINT.match(line)
+        if q_match:
+            flush_answer()
+            current_question = q_match.group(1).strip()
+            continue
+        if a_match:
+            current_answer_parts.append(a_match.group(1).strip())
+            continue
+        current_answer_parts.append(line)
+
+    flush_answer()
+    return {
+        "source_type": "candidate_answers",
+        "answers": answers,
+        "raw_lines": lines,
     }
 
 

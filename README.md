@@ -5,8 +5,8 @@
 ### *A dual-perspective interview and hiring skill*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Stage: v0.1](https://img.shields.io/badge/Stage-v0.1-blue.svg)](docs/ROADMAP.md)
-[![Mode: Local Only](https://img.shields.io/badge/Research-local--only-orange.svg)](references/v0-1-scope.md)
+[![Workflows: 4](https://img.shields.io/badge/Workflows-4-success.svg)](references/workflow-status.md)
+[![Research Profiles: 3](https://img.shields.io/badge/Research-3%20profiles-blue.svg)](references/research-status.md)
 [![Codex Skill](https://img.shields.io/badge/Skill-Codex-black.svg)](SKILL.md)
 [![Stars](https://img.shields.io/github/stars/lmqvq/offer-skill?style=social)](https://github.com/lmqvq/offer-skill/stargazers)
 
@@ -16,31 +16,32 @@
 
 `offer-skill` helps candidates and interviewers work from the same materials, but with different goals.
 
-- Candidates want to explain projects better, find weak points in their resume, and prepare more precisely.
-- Interviewers want to judge depth, detect weak evidence, and ask sharper follow-up questions.
-- Most AI helpers answer once and disappear. `offer-skill` turns those materials into reusable **case artifacts**.
+- Candidates want to explain projects better, discover weak points, prepare for interviews, and review past performance.
+- Interviewers want to judge depth, detect weak evidence, ask sharper follow-up questions, and review interview quality.
+- Most AI helpers answer once and disappear. `offer-skill` turns resume, JD, project, and interview materials into reusable **case artifacts**.
 
 In one line:
 
-> Resume + JD + project notes -> structured case -> reusable hiring analysis
+> Resume + JD + project notes + interview notes -> structured case -> reusable hiring analysis
 
 ## What This Project Is
 
-`offer-skill` is not a generic chat prompt pack.
+`offer-skill` is not just a prompt collection.
 
 It is a Skill repo built around:
 
 - dual perspectives: `candidate`, `interviewer`, `dual`
-- workflow presets: `project-highlight`, `resume-eval`, `mock-interview`, `interview-retro`
+- four workflows:
+  - `project-highlight`
+  - `resume-eval`
+  - `mock-interview`
+  - `interview-retro`
+- three research modes:
+  - `local-only`
+  - `web-assisted`
+  - `deep-research`
 - case persistence: keep materials and outputs under `cases/{case_slug}/`
-- deterministic helpers: internal scripts for case creation, import, workflow execution, backup, and rollback
-
-The intended usage model is AI-first:
-
-1. install `offer-skill` into a host that supports Skills
-2. ask the AI tool to use `offer-skill`
-3. let the AI read your local files
-4. let the AI call the internal scripts for you
+- deterministic helpers: internal scripts for case creation, import, workflow execution, backup, rollback, and research capture
 
 ## What Problem It Solves
 
@@ -48,39 +49,37 @@ The intended usage model is AI-first:
 
 - "My project sounds flat in interviews even though I did real work."
 - "I don't know which parts of my resume actually match this JD."
-- "I need stronger, more evidence-based preparation than generic interview tips."
+- "I want mock interviews tied to my real materials, not generic interview lists."
+- "After an interview, I want to know whether I lacked knowledge or just explained it badly."
 
 ### Interviewer side
 
 - "This resume sounds good, but where is the hard evidence?"
-- "I need follow-up questions that actually separate shallow familiarity from real ownership."
-- "I want a reusable evaluation artifact, not just chat history."
+- "I need follow-up questions that separate shallow familiarity from real ownership."
+- "I want to review interview performance in a structured way."
+- "I want optional external trend signals, but I still want the analysis grounded in the candidate's actual materials."
 
-## v0.1 Status
+## Current Capabilities
 
-`offer-skill` is intentionally shipping a narrow `v0.1`.
+| Workflow | What it does | Typical inputs | Output |
+|---|---|---|---|
+| `project-highlight` | Extract project value, ownership, risk points, and deep-dive prompts | project notes, optional resume/JD | project highlight analysis |
+| `resume-eval` | Compare a resume against a JD, detect weak evidence, and generate validation questions | resume, JD, optional projects | resume-vs-JD evaluation |
+| `mock-interview` | Generate interview flows and practice questions from local materials and optional research signals | JD, optional resume/projects/research | mock interview plan |
+| `interview-retro` | Review real or mock interview notes and turn them into an improvement plan | interview notes, optional answers/JD/projects/research | interview retrospective |
 
-### Available now
+## Research Profiles
 
-| Workflow | Status | Perspective support | Input style | Output |
-|---|---|---|---|---|
-| `project-highlight` | `enabled` | `candidate` / `interviewer` / `dual` | local files only | project highlight analysis |
-| `resume-eval` | `enabled` | `candidate` / `interviewer` / `dual` | local files only | resume-vs-JD evaluation |
+`offer-skill` supports three research profiles:
 
-### Explicitly deferred, but intentionally preserved
-
-These are **not implemented yet**, and must remain visible in docs and presets:
-
-| Capability | Status | Why it stays visible |
+| Profile | Best for | Input style |
 |---|---|---|
-| `mock-interview` | `planned` | future interview simulation workflow |
-| `interview-retro` | `planned` | future interview retrospective workflow |
-| `web-assisted` research | `planned` | future sourced external interview material support |
-| `deep-research` interview trend analysis | `planned` | future deeper role/stack/company interview analysis |
+| `local-only` | privacy-first, grounded local analysis | only user-provided files |
+| `web-assisted` | stronger realism from external signals | local files + external notes or live search |
+| `deep-research` | broader interview trend analysis | local files + deeper external search/synthesis |
 
 See:
 
-- [Deferred Capabilities](docs/DEFERRED_CAPABILITIES.md)
 - [Workflow Status](references/workflow-status.md)
 - [Research Status](references/research-status.md)
 
@@ -95,21 +94,23 @@ Use $offer-skill to evaluate my resume against this JD from the candidate perspe
 
 Use $offer-skill to extract project highlights from this backend project note from the interviewer perspective.
 
-Use $offer-skill to compare candidate and interviewer views of this project.
+Use $offer-skill to run a mock interview for this JD using my resume and project notes.
+
+Use $offer-skill to review these interview notes and tell me what broke down.
 ```
 
 The AI should then:
 
 - create or reuse a case
 - import the provided local materials
-- run the requested workflow
+- apply the requested workflow
 - save the result under `cases/{case_slug}/`
 
 ## Install
 
 If your host discovers skills from a folder containing `SKILL.md`, clone this repo into that host's skills directory.
 
-Example idea:
+Example:
 
 ```bash
 git clone https://github.com/lmqvq/offer-skill.git <YOUR_SKILLS_DIR>/offer-skill
@@ -125,14 +126,16 @@ Examples:
 Use $offer-skill to evaluate this resume against the attached JD from the interviewer perspective.
 
 Use $offer-skill to extract project highlights from this project description for a backend engineer role.
+
+Use $offer-skill to create a mock interview from this JD with deep-research enabled.
 ```
 
 ## One-Call Internal Entrypoint
 
-Internally, the preferred execution path is now a single script:
+Internally, the preferred execution path is a single script:
 
 ```bash
-python scripts/offer_skill.py --workflow <resume-eval|project-highlight> ...
+python scripts/offer_skill.py --workflow <project-highlight|resume-eval|mock-interview|interview-retro> ...
 ```
 
 That unified entrypoint can:
@@ -141,22 +144,25 @@ That unified entrypoint can:
 - import local materials
 - run the selected workflow
 - write outputs back to the case
+- optionally use external research text or live research queries
 
 Example:
 
 ```bash
 python scripts/offer_skill.py \
-  --workflow resume-eval \
-  --perspective interviewer \
-  --display-name "Backend Resume Review" \
-  --resume-file ./resume.md \
+  --workflow mock-interview \
+  --perspective candidate \
+  --display-name "Backend Mock Interview" \
   --jd-file ./jd.md \
-  --projects-file ./projects.md
+  --resume-file ./resume.md \
+  --projects-file ./projects.md \
+  --research-profile web-assisted \
+  --research-file ./market_notes.md
 ```
 
 ## Lower-Level Developer Flow
 
-If you want to debug the system step by step, the lower-level scripts are still available:
+If you want to debug the system step by step, the lower-level scripts are still available.
 
 ### 1. Create a case
 
@@ -174,6 +180,8 @@ python scripts/create_case.py \
 python scripts/import_material.py --case-slug backend-java-social --material-type resume --from-file ./resume.md
 python scripts/import_material.py --case-slug backend-java-social --material-type jd --from-file ./jd.md
 python scripts/import_material.py --case-slug backend-java-social --material-type projects --from-file ./projects.md
+python scripts/import_material.py --case-slug backend-java-social --material-type interview_notes --from-file ./interview_notes.md
+python scripts/import_material.py --case-slug backend-java-social --material-type candidate_answers --from-file ./candidate_answers.md
 ```
 
 ### 3. Run a workflow
@@ -181,6 +189,8 @@ python scripts/import_material.py --case-slug backend-java-social --material-typ
 ```bash
 python scripts/run_workflow.py --case-slug backend-java-social --workflow resume-eval
 python scripts/run_workflow.py --case-slug backend-java-social --workflow project-highlight
+python scripts/run_workflow.py --case-slug backend-java-social --workflow mock-interview --research-profile web-assisted --research-file ./market_notes.md
+python scripts/run_workflow.py --case-slug backend-java-social --workflow interview-retro
 ```
 
 ### 4. Back up or restore
@@ -234,6 +244,29 @@ Produces a Markdown artifact with:
 - suggested questions
 - action items
 
+### `mock-interview`
+
+Produces a Markdown artifact with:
+
+- interview setup
+- categorized question list
+- expected signals
+- common failure modes
+- follow-up paths
+- practice plan
+- research signals
+
+### `interview-retro`
+
+Produces a Markdown artifact with:
+
+- summary
+- what went well
+- what broke down
+- interviewer interpretation
+- candidate improvement plan
+- next practice questions
+
 ## Why The Case Model Matters
 
 The project is built around `case` artifacts because interview preparation and hiring review are iterative.
@@ -249,7 +282,7 @@ With a case model, you get:
 - reusable materials
 - persistent outputs
 - version backup and rollback
-- room for future workflow chaining
+- room for workflow chaining
 
 ## Project Structure
 
@@ -271,16 +304,15 @@ offer-skill/
 Important directories:
 
 - `presets/`: workflow, perspective, and research-profile presets
-- `references/`: scope guards and schema notes
+- `references/`: scope notes and schema notes
 - `scripts/`: internal deterministic helpers
-- `tests/`: regression tests, including deferred-capability guards
+- `tests/`: regression tests for workflows, case scaffolding, and research-enabled execution
 
 ## Documentation
 
 - [PRD](docs/PRD.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Roadmap](docs/ROADMAP.md)
-- [Deferred Capabilities](docs/DEFERRED_CAPABILITIES.md)
 
 ## Safety and Boundaries
 
@@ -291,7 +323,7 @@ It should not be used to:
 - fabricate project experience
 - generate deceptive claims
 - replace human hiring decisions
-- imply live web research in `v0.1`
+- present external trend signals as if they were guaranteed truth
 
 ## Tests
 
@@ -303,17 +335,18 @@ python -m unittest discover -s offer-skill/tests -p "test_*.py" -v
 
 ## Contributing
 
-Before changing scope, keep these truths intact:
+Contributions are welcome, especially around:
 
-- `v0.1` only enables `project-highlight` and `resume-eval`
-- `mock-interview` and `interview-retro` are deferred, not removed
-- `web-assisted` and `deep-research` remain planned research profiles
+- richer parsers
+- better interview trend synthesis
+- stronger validators
+- more realistic workflow chaining
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Acknowledgment
 
-The presentation and repo-landing-page thinking here was improved by studying how [`titanwings/colleague-skill`](https://github.com/titanwings/colleague-skill) explains scope, install, usage, status, and roadmap on GitHub.
+The repo presentation here was improved by studying how [`titanwings/colleague-skill`](https://github.com/titanwings/colleague-skill) explains scope, install, usage, and roadmap on GitHub.
 
 ## License
 

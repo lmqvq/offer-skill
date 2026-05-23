@@ -5,7 +5,7 @@ Subtitle: `A dual-perspective interview and hiring skill`
 
 ## Summary
 
-`offer-skill` helps candidates and interviewers analyze resumes, project experience, and hiring materials from candidate, interviewer, or dual perspectives.
+`offer-skill` helps candidates and interviewers analyze resumes, project experience, interview notes, and external interview signals from candidate, interviewer, or dual perspectives.
 
 Its core model is case-based:
 
@@ -27,37 +27,16 @@ Its core model is case-based:
 - `mock-interview`
 - `interview-retro`
 
-## v0.1 Release Scope
+## Research Profiles
 
-### Shipping in `v0.1`
-
-- `project-highlight`
-- `resume-eval`
-- local input handling only
-- case persistence
-- version backup and rollback
-
-### Deferred After `v0.1`
-
-These items are planned and must remain visible:
-
-- `mock-interview`
-- `interview-retro`
-- `web-assisted` research
+- `local-only`
+- `web-assisted`
 - `deep-research`
-
-Do not delete or silently collapse these planned capabilities when evolving the repo.
-
-They must remain represented in:
-
-- workflow presets
-- research-profile presets
-- roadmap and deferred-capability docs
 
 ## Core Principles
 
 - Perspective changes emphasis, not facts
 - Evidence must be stronger than vibes
 - Outputs must be structured and actionable
-- Local-only scope must be explicit in `v0.1`
-- Deferred capabilities must remain on the roadmap
+- Local materials remain the grounding layer even when external research is used
+- Cases should make repeated interview work cumulative, not disposable

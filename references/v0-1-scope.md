@@ -1,26 +1,20 @@
-# v0.1 Scope Guard
+# Current Scope Notes
 
-This file exists to prevent scope drift and accidental roadmap erasure.
-
-## Enabled in v0.1
+`offer-skill` now supports all four core workflows:
 
 - `project-highlight`
 - `resume-eval`
-- local material handling
-- case persistence
-- backup and rollback
-
-## Deferred After v0.1
-
 - `mock-interview`
 - `interview-retro`
-- `web-assisted` research
-- `deep-research`
 
-## Mandatory Behavior
+## Recommended Maturity Guidance
 
-- State clearly that `v0.1` does not perform live web research.
-- Keep deferred workflows visible in docs and presets.
-- Keep deferred research profiles visible in docs and presets.
-- Do not rename deferred workflows away just because they are not implemented yet.
-- Do not rename deferred research profiles away just because they are not implemented yet.
+- Prefer `project-highlight` and `resume-eval` when starting a new case.
+- Use `mock-interview` when you want a question flow tied to a JD and optional research signals.
+- Use `interview-retro` when you already have interview notes or candidate answer records.
+
+## Research Guidance
+
+- Use `local-only` when privacy and local grounding matter most.
+- Use `web-assisted` when you want sourced external signals.
+- Use `deep-research` when you want broader interview trend coverage.

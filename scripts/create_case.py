@@ -52,8 +52,8 @@ def build_meta(args: argparse.Namespace) -> dict:
             "available_profiles": ["local-only", "web-assisted", "deep-research"],
             "sources_count": 0,
             "last_updated_at": None,
-            "enabled_in_v0_1": False,
-            "deferred_note": "Web-assisted and deep research are planned after v0.1.",
+            "mode": "local-first",
+            "notes": "",
         },
         "artifacts": {
             "project_highlight": "analyses/project_highlight.md",
@@ -71,9 +71,9 @@ def build_meta(args: argparse.Namespace) -> dict:
             "updated_at": timestamp,
         },
         "scope": {
-            "v0_1_enabled_workflows": ["project-highlight", "resume-eval"],
-            "deferred_workflows": ["mock-interview", "interview-retro"],
-            "local_only": True,
+            "enabled_workflows": ["project-highlight", "resume-eval", "mock-interview", "interview-retro"],
+            "research_profiles": ["local-only", "web-assisted", "deep-research"],
+            "default_mode": "local-first",
         },
     }
 
@@ -108,12 +108,7 @@ def build_manifest(meta: dict) -> dict:
             "mock-interview",
             "interview-retro",
         ],
-        "v0_1_enabled_capabilities": ["project-highlight", "resume-eval"],
-        "deferred_capabilities": ["mock-interview", "interview-retro", "web-assisted-research"],
-        "research_profiles": {
-            "enabled_in_v0_1": ["local-only"],
-            "deferred_after_v0_1": ["web-assisted", "deep-research"]
-        },
+        "research_profiles": ["local-only", "web-assisted", "deep-research"],
     }
 
 

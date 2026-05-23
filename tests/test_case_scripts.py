@@ -22,7 +22,7 @@ class OfferSkillScriptsTest(unittest.TestCase):
             check=True,
         )
 
-    def test_create_case_writes_expected_layout_and_scope_flags(self) -> None:
+    def test_create_case_writes_full_capability_scope(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             cases_root = Path(tmp_dir) / "cases"
             result = self.run_cmd(
@@ -43,17 +43,15 @@ class OfferSkillScriptsTest(unittest.TestCase):
             )
 
             case_dir = Path(result.stdout.strip())
-            self.assertTrue((case_dir / "meta.json").exists())
-            self.assertTrue((case_dir / "manifest.json").exists())
-            self.assertTrue((case_dir / "inputs" / "resume.md").exists())
-            self.assertTrue((case_dir / "research" / "raw").exists())
-
             meta = json.loads((case_dir / "meta.json").read_text(encoding="utf-8"))
-            self.assertEqual(meta["perspective"], "candidate")
-            self.assertEqual(meta["scope"]["v0_1_enabled_workflows"], ["project-highlight", "resume-eval"])
-            self.assertEqual(meta["scope"]["deferred_workflows"], ["mock-interview", "interview-retro"])
-            self.assertTrue(meta["scope"]["local_only"])
-            self.assertEqual(meta["research"]["available_profiles"], ["local-only", "web-assisted", "deep-research"])
+            self.assertEqual(
+                meta["scope"]["enabled_workflows"],
+                ["project-highlight", "resume-eval", "mock-interview", "interview-retro"],
+            )
+            self.assertEqual(
+                meta["scope"]["research_profiles"],
+                ["local-only", "web-assisted", "deep-research"],
+            )
 
     def test_version_manager_backup_and_rollback(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -187,7 +185,7 @@ class OfferSkillScriptsTest(unittest.TestCase):
             self.assertIn("Overall match", content)
             self.assertTrue((cases_root / "resume-eval-case" / "derived" / "jd_match.json").exists())
 
-    def test_run_project_highlight_and_deferred_workflow_guard(self) -> None:
+    def test_run_project_highlight_workflow(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             cases_root = Path(tmp_dir) / "cases"
             self.run_cmd(
@@ -239,43 +237,103 @@ class OfferSkillScriptsTest(unittest.TestCase):
             self.assertTrue(output_path.exists())
             self.assertIn("# Project Highlight", output_path.read_text(encoding="utf-8"))
 
-            deferred = subprocess.run(
-                [
-                    str(PYTHON),
-                    str(ROOT / "scripts" / "run_workflow.py"),
-                    "--case-slug",
-                    "project-case",
-                    "--workflow",
-                    "mock-interview",
-                    "--cases-root",
-                    str(cases_root),
-                ],
-                cwd=ROOT.parent,
-                text=True,
-                capture_output=True,
+    def test_mock_interview_with_research_text(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            cases_root = Path(tmp_dir) / "cases"
+            jd_src = Path(tmp_dir) / "jd.md"
+            projects_src = Path(tmp_dir) / "projects.md"
+            jd_src.write_text(
+                "# Backend Engineer\n"
+                "- Required: Strong Python backend development\n"
+                "- Required: Familiar with Redis and system design\n",
+                encoding="utf-8",
             )
-            self.assertNotEqual(deferred.returncode, 0)
-            self.assertIn("planned after v0.1", deferred.stderr + deferred.stdout)
+            projects_src.write_text(
+                "# API Platform\n"
+                "- Built Python APIs and optimized Redis cache layers.\n"
+                "- Improved latency by 18%.\n",
+                encoding="utf-8",
+            )
+            research_src = Path(tmp_dir) / "research.md"
+            research_src.write_text(
+                "Recent interview notes ask: How do you design cache consistency? "
+                "How do you scale Python services under high concurrency? "
+                "How do you explain Redis invalidation tradeoffs?",
+                encoding="utf-8",
+            )
 
-    def test_deferred_capabilities_are_kept_in_presets_and_docs(self) -> None:
-        workflows = json.loads((ROOT / "presets" / "workflows.json").read_text(encoding="utf-8"))
-        research_profiles = json.loads((ROOT / "presets" / "research-profiles.json").read_text(encoding="utf-8"))
+            result = self.run_cmd(
+                str(PYTHON),
+                str(ROOT / "scripts" / "offer_skill.py"),
+                "--workflow",
+                "mock-interview",
+                "--perspective",
+                "candidate",
+                "--display-name",
+                "Mock Interview Case",
+                "--cases-root",
+                str(cases_root),
+                "--jd-file",
+                str(jd_src),
+                "--projects-file",
+                str(projects_src),
+                "--research-profile",
+                "web-assisted",
+                "--research-file",
+                str(research_src),
+                "--json",
+                cwd=ROOT.parent,
+            )
+            payload = json.loads(result.stdout)
+            output_path = Path(payload["output_path"])
+            self.assertTrue(output_path.exists())
+            content = output_path.read_text(encoding="utf-8")
+            self.assertIn("# Mock Interview", content)
+            self.assertIn("Research profile: web-assisted", content)
+            self.assertTrue((Path(payload["case_dir"]) / "research" / "merged" / "web-assisted-summary.md").exists())
 
-        self.assertEqual(workflows["mock-interview"]["status"], "planned")
-        self.assertFalse(workflows["mock-interview"]["enabled_in_v0_1"])
-        self.assertEqual(workflows["interview-retro"]["status"], "planned")
-        self.assertFalse(workflows["interview-retro"]["enabled_in_v0_1"])
+    def test_interview_retro_workflow(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            cases_root = Path(tmp_dir) / "cases"
+            notes_src = Path(tmp_dir) / "notes.md"
+            answers_src = Path(tmp_dir) / "answers.md"
+            notes_src.write_text(
+                "Q: 你为什么使用 Redis？\n"
+                "A: 因为需要降低热点查询延迟。\n"
+                "Q: 遇到缓存一致性问题怎么办？\n"
+                "A: 不太清楚。\n",
+                encoding="utf-8",
+            )
+            answers_src.write_text(
+                "Q: 你为什么使用 Redis？\n"
+                "A: 我们的订单接口延迟较高，所以我负责把热点查询前移到 Redis，并把平均延迟降低了 20ms。\n",
+                encoding="utf-8",
+            )
 
-        self.assertEqual(research_profiles["web-assisted"]["status"], "planned")
-        self.assertFalse(research_profiles["web-assisted"]["enabled_in_v0_1"])
-        self.assertEqual(research_profiles["deep-research"]["status"], "planned")
-        self.assertFalse(research_profiles["deep-research"]["enabled_in_v0_1"])
-
-        deferred_doc = (ROOT / "docs" / "DEFERRED_CAPABILITIES.md").read_text(encoding="utf-8")
-        self.assertIn("mock-interview", deferred_doc)
-        self.assertIn("interview-retro", deferred_doc)
-        self.assertIn("web-assisted", deferred_doc)
-        self.assertIn("deep-research", deferred_doc)
+            result = self.run_cmd(
+                str(PYTHON),
+                str(ROOT / "scripts" / "offer_skill.py"),
+                "--workflow",
+                "interview-retro",
+                "--perspective",
+                "dual",
+                "--display-name",
+                "Retro Case",
+                "--cases-root",
+                str(cases_root),
+                "--interview-notes-file",
+                str(notes_src),
+                "--candidate-answers-file",
+                str(answers_src),
+                "--json",
+                cwd=ROOT.parent,
+            )
+            payload = json.loads(result.stdout)
+            output_path = Path(payload["output_path"])
+            self.assertTrue(output_path.exists())
+            content = output_path.read_text(encoding="utf-8")
+            self.assertIn("# Interview Retrospective", content)
+            self.assertIn("Knowledge gaps", content)
 
     def test_unified_entrypoint_can_create_import_and_run_in_one_call(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:

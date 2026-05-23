@@ -1,16 +1,13 @@
 # Research Profile Status
 
-## Enabled in v0.1
+## Available Profiles
 
 - `local-only`
-
-## Deferred After v0.1
-
 - `web-assisted`
 - `deep-research`
 
-## Notes
+## Usage Notes
 
-- `web-assisted` is reserved for sourced external interview material collection.
-- `deep-research` is reserved for deeper interview trend analysis.
-- Both must remain visible in presets even before implementation.
+- `local-only` stays grounded in user-provided files.
+- `web-assisted` can blend local materials with supplied external notes or live search-derived signals.
+- `deep-research` expands the search set and trend synthesis depth.

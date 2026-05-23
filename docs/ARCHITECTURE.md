@@ -7,27 +7,23 @@ user intent
   -> perspective preset
   -> workflow preset
   -> local materials
+  -> optional research profile
   -> case artifacts
   -> structured outputs
   -> version backup / rollback
 ```
 
-## Active v0.1 Modules
+## Active Modules
 
 - `scripts/create_case.py`
+- `scripts/import_material.py`
+- `scripts/run_workflow.py`
+- `scripts/offer_skill.py`
 - `scripts/version_manager.py`
+- `scripts/research_engine.py`
 - `presets/perspectives.json`
 - `presets/workflows.json`
 - `presets/research-profiles.json`
-
-## Deferred Modules After v0.1
-
-- mock interview generation
-- interview retrospective builder
-- web-assisted research pipeline
-- deep-research interview trend analysis
-
-These are deferred, not removed.
 
 ## Case Contract
 

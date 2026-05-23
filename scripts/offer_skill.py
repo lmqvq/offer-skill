@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unified entrypoint for offer-skill v0.1."""
+"""Unified entrypoint for offer-skill."""
 
 from __future__ import annotations
 
@@ -82,13 +82,18 @@ def sync_meta_overrides(case_dir: Path, args: argparse.Namespace) -> dict:
             target_role["stack"] = stack
             changed = True
 
+    meta.setdefault("research", {})
+    if args.research_profile:
+        meta["research"]["profile"] = args.research_profile
+        changed = True
+
     if changed:
         save_meta(case_dir, meta)
     return load_meta(case_dir)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Unified entrypoint for offer-skill v0.1")
+    parser = argparse.ArgumentParser(description="Unified entrypoint for offer-skill")
     parser.add_argument("--workflow", required=True)
     parser.add_argument("--perspective", default="candidate", choices=["candidate", "interviewer", "dual"])
     parser.add_argument("--case-slug", help="Reuse an existing case or set the new case slug")
@@ -99,12 +104,20 @@ def main() -> None:
     parser.add_argument("--level", help="Target seniority or level")
     parser.add_argument("--company-type", help="Target company type")
     parser.add_argument("--stack", help="Comma-separated target stack")
+    parser.add_argument("--research-profile", default="local-only", choices=["local-only", "web-assisted", "deep-research"])
+    parser.add_argument("--research-query")
+    parser.add_argument("--research-file")
+    parser.add_argument("--research-text")
     parser.add_argument("--resume-file")
     parser.add_argument("--resume-text")
     parser.add_argument("--jd-file")
     parser.add_argument("--jd-text")
     parser.add_argument("--projects-file")
     parser.add_argument("--projects-text")
+    parser.add_argument("--interview-notes-file")
+    parser.add_argument("--interview-notes-text")
+    parser.add_argument("--candidate-answers-file")
+    parser.add_argument("--candidate-answers-text")
     parser.add_argument("--json", action="store_true", help="Print machine-readable output")
     args = parser.parse_args()
 
@@ -116,15 +129,25 @@ def main() -> None:
         ("resume", "resume_file", "resume_text"),
         ("jd", "jd_file", "jd_text"),
         ("projects", "projects_file", "projects_text"),
+        ("interview_notes", "interview_notes_file", "interview_notes_text"),
+        ("candidate_answers", "candidate_answers_file", "candidate_answers_text"),
     ):
         content = load_optional_content(getattr(args, file_attr), getattr(args, text_attr))
         if content is not None:
             target_path = import_material(case_dir=case_dir, material_type=material_type, content=content)
             imported[material_type] = str(target_path)
 
+    research_text = load_optional_content(args.research_file, args.research_text)
     meta = load_meta(case_dir)
     try:
-        output_path = execute_workflow(case_dir, meta, args.workflow)
+        output_path = execute_workflow(
+            case_dir,
+            meta,
+            args.workflow,
+            research_profile=args.research_profile,
+            research_query=args.research_query,
+            research_text=research_text,
+        )
     except ValueError as exc:
         raise SystemExit(str(exc))
     append_workflow_history(meta, args.workflow)
@@ -136,6 +159,7 @@ def main() -> None:
         "case_slug": case_dir.name,
         "workflow": args.workflow,
         "perspective": meta.get("perspective", args.perspective),
+        "research_profile": args.research_profile,
         "imported": imported,
         "output_path": output_path,
     }
@@ -147,6 +171,7 @@ def main() -> None:
     print(f"Case: {payload['case_dir']}")
     print(f"Workflow: {payload['workflow']}")
     print(f"Perspective: {payload['perspective']}")
+    print(f"Research profile: {payload['research_profile']}")
     if imported:
         print("Imported:")
         for material_type, path in imported.items():

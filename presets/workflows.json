@@ -2,33 +2,29 @@
   "project-highlight": {
     "display_name": "Project Highlight",
     "status": "enabled",
-    "enabled_in_v0_1": true,
     "required_inputs": ["projects"],
     "optional_inputs": ["resume", "jd"],
-    "deferred_note": ""
+    "notes": "Extract highlight framing, evidence, risk points, and interviewer-style deep-dive prompts."
   },
   "resume-eval": {
     "display_name": "Resume Evaluation",
     "status": "enabled",
-    "enabled_in_v0_1": true,
-    "required_inputs": ["resume"],
-    "optional_inputs": ["jd", "projects"],
-    "deferred_note": ""
+    "required_inputs": ["resume", "jd"],
+    "optional_inputs": ["projects"],
+    "notes": "Evaluate resume-vs-JD match, evidence strength, weak signals, and follow-up questions."
   },
   "mock-interview": {
     "display_name": "Mock Interview",
-    "status": "planned",
-    "enabled_in_v0_1": false,
+    "status": "enabled",
     "required_inputs": ["jd"],
-    "optional_inputs": ["resume", "projects", "question_bank"],
-    "deferred_note": "Planned after v0.1. Do not remove from roadmap. v0.1 does not perform live web-assisted interview research."
+    "optional_inputs": ["resume", "projects", "question_bank", "research"],
+    "notes": "Generate role-specific interview flows from local evidence and optional research signals."
   },
   "interview-retro": {
     "display_name": "Interview Retrospective",
-    "status": "planned",
-    "enabled_in_v0_1": false,
+    "status": "enabled",
     "required_inputs": ["interview_notes"],
-    "optional_inputs": ["resume", "jd", "projects", "candidate_answers"],
-    "deferred_note": "Planned after v0.1. Do not remove from roadmap."
+    "optional_inputs": ["resume", "jd", "projects", "candidate_answers", "research"],
+    "notes": "Review interview performance, separate knowledge gaps from expression gaps, and build a next-step practice plan."
   }
 }

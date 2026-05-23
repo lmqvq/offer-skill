@@ -28,6 +28,7 @@ cases/{case_slug}/
 - `research`
 - `artifacts`
 - `lifecycle`
+- `scope`
 
 ## `manifest.json` Core Fields
 
@@ -38,12 +39,17 @@ cases/{case_slug}/
 - `entrypoints`
 - `artifacts`
 - `capabilities`
+- `research_profiles`
 
-## v0.1 Note
+## Research Note
 
-`research` directories still exist in `v0.1` even though research workflows are deferred. Keep the folders to preserve forward compatibility.
+`research/` directories remain part of every case because research can now be used directly by:
 
-Research profile presets must still preserve:
+- `mock-interview`
+- `interview-retro`
 
+Research profiles available in the schema:
+
+- `local-only`
 - `web-assisted`
 - `deep-research`
