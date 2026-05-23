@@ -10,6 +10,10 @@
 [![Codex Skill](https://img.shields.io/badge/Skill-Codex-black.svg)](SKILL.md)
 [![Stars](https://img.shields.io/github/stars/lmqvq/offer-skill?style=social)](https://github.com/lmqvq/offer-skill/stargazers)
 
+[Overview](#what-this-project-is) · [Capabilities](#current-capabilities) · [Research](#research-profiles) · [Install](#install) · [Usage](#how-users-should-actually-use-it) · [Outputs](#example-outputs) · [Docs](#documentation)
+
+[**English**](README.md) · [**中文**](docs/lang/README_ZH.md)
+
 </div>
 
 ---
