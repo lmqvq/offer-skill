@@ -10,7 +10,7 @@
 [![Codex Skill](https://img.shields.io/badge/Skill-Codex-black.svg)](SKILL.md)
 [![Stars](https://img.shields.io/github/stars/lmqvq/offer-skill?style=social)](https://github.com/lmqvq/offer-skill/stargazers)
 
-[Overview](#what-this-project-is) · [Capabilities](#current-capabilities) · [Research](#research-profiles) · [Install](#install) · [Usage](#how-users-should-actually-use-it) · [Outputs](#example-outputs) · [Docs](#documentation)
+[Overview](#what-this-project-is) · [Capabilities](#current-capabilities) · [Research](#research-profiles) · [Install](#-install) · [Usage](#-usage) · [Demo](#-demo) · [Outputs](#example-outputs) · [Docs](#documentation)
 
 [**English**](README.md) · [**中文**](docs/lang/README_ZH.md)
 
@@ -63,6 +63,15 @@ It is a Skill repo built around:
 - "I want to review interview performance in a structured way."
 - "I want optional external trend signals, but I still want the analysis grounded in the candidate's actual materials."
 
+## 🔧 Features
+
+- **Dual perspective**: switch between `candidate`, `interviewer`, and `dual`
+- **Case-based workflow**: reuse the same resume, JD, project notes, and interview notes across multiple tasks
+- **Four workflows**: `project-highlight`, `resume-eval`, `mock-interview`, `interview-retro`
+- **Three research modes**: `local-only`, `web-assisted`, `deep-research`
+- **Persistent outputs**: all analyses are written back into a reusable case folder
+- **Version backup and rollback**: preserve history before risky updates
+
 ## Current Capabilities
 
 | Workflow | What it does | Typical inputs | Output |
@@ -87,7 +96,37 @@ See:
 - [Workflow Status](references/workflow-status.md)
 - [Research Status](references/research-status.md)
 
-## How Users Should Actually Use It
+---
+
+## ⚡ Install
+
+If your AI host supports Skills discovered from a folder containing `SKILL.md`, the simplest option is to let the AI install it from the repo URL.
+
+Example prompt:
+
+```text
+Install the offer-skill skill for me: https://github.com/lmqvq/offer-skill
+```
+
+If your host does not support repo-driven install, clone it manually into the host's skills directory:
+
+```bash
+git clone https://github.com/lmqvq/offer-skill.git <YOUR_SKILLS_DIR>/offer-skill
+```
+
+Common examples:
+
+| Host | Typical skill path |
+|---|---|
+| Codex | `~/.codex/skills/offer-skill` |
+| Claude Code | `~/.claude/skills/offer-skill` |
+| OpenClaw | `~/.openclaw/workspace/skills/offer-skill` |
+
+Then invoke it from your AI tool by name.
+
+---
+
+## 🚀 Usage
 
 The normal user should **talk to the AI tool**, not manually orchestrate multiple scripts.
 
@@ -105,50 +144,19 @@ Use $offer-skill to review these interview notes and tell me what broke down.
 
 The AI should then:
 
-- create or reuse a case
-- import the provided local materials
-- apply the requested workflow
-- save the result under `cases/{case_slug}/`
+1. create or reuse a case
+2. import the provided local materials
+3. apply the requested workflow
+4. optionally use the selected research profile
+5. save the result under `cases/{case_slug}/`
 
-## Install
-
-If your host discovers skills from a folder containing `SKILL.md`, clone this repo into that host's skills directory.
-
-Example:
-
-```bash
-git clone https://github.com/lmqvq/offer-skill.git <YOUR_SKILLS_DIR>/offer-skill
-```
-
-Then invoke it from your AI tool by name.
-
-### AI-first invocation
-
-Examples:
-
-```text
-Use $offer-skill to evaluate this resume against the attached JD from the interviewer perspective.
-
-Use $offer-skill to extract project highlights from this project description for a backend engineer role.
-
-Use $offer-skill to create a mock interview from this JD with deep-research enabled.
-```
-
-## One-Call Internal Entrypoint
+### Internal one-call entrypoint
 
 Internally, the preferred execution path is a single script:
 
 ```bash
 python scripts/offer_skill.py --workflow <project-highlight|resume-eval|mock-interview|interview-retro> ...
 ```
-
-That unified entrypoint can:
-
-- create or reuse a case
-- import local materials
-- run the selected workflow
-- write outputs back to the case
-- optionally use external research text or live research queries
 
 Example:
 
@@ -163,6 +171,76 @@ python scripts/offer_skill.py \
   --research-profile web-assisted \
   --research-file ./market_notes.md
 ```
+
+---
+
+## ✨ Demo
+
+Three representative use cases.
+
+### 1. Candidate-side `resume-eval`
+
+> Input: resume + JD for a backend role
+
+```text
+User         ❯ Use $offer-skill to evaluate my resume against this JD from the candidate perspective.
+
+offer-skill  ❯ Overall match: medium
+               Strong matches:
+               - Java backend development
+               - Redis usage with measurable latency improvements
+
+               Weak matches:
+               - Kafka appears in the skill list, but project evidence is thin
+
+               Candidate suggestions:
+               - Add one concrete Kafka story
+               - Move quantified results closer to the top of the resume
+```
+
+### 2. Interviewer-side `project-highlight`
+
+> Input: project notes for a feed / API service
+
+```text
+User         ❯ Use $offer-skill to extract project highlights from this project note from the interviewer perspective.
+
+offer-skill  ❯ Candidate view:
+               - Strong ownership signal around feed write-path refactor
+
+               Interviewer view:
+               - Good Redis signal, but I would verify cache consistency handling
+
+               Suggested questions:
+               - What was the hardest consistency tradeoff?
+               - If traffic grew 10x, what would fail first?
+```
+
+### 3. `mock-interview` with research signals
+
+> Input: JD + resume + projects + optional market interview notes
+
+```text
+User         ❯ Use $offer-skill to create a mock interview from this JD with deep-research enabled.
+
+offer-skill  ❯ Interview setup:
+               - Perspective: candidate
+               - Research profile: deep-research
+
+               Question list:
+               - How do you design cache consistency under high concurrency?
+               - What tradeoffs did you make in your Redis invalidation strategy?
+               - How would you scale this service if QPS increased sharply?
+
+               Research signals:
+               - cache consistency
+               - distributed systems
+               - Redis tradeoff questions
+```
+
+### Lower-level developer flow
+
+If you want to debug the system step by step, the lower-level scripts are still available.
 
 ## Lower-Level Developer Flow
 

@@ -10,7 +10,7 @@
 [![Codex Skill](https://img.shields.io/badge/Skill-Codex-black.svg)](../../SKILL.md)
 [![Stars](https://img.shields.io/github/stars/lmqvq/offer-skill?style=social)](https://github.com/lmqvq/offer-skill/stargazers)
 
-[概述](#这个项目是什么) · [能力](#当前能力) · [研究模式](#研究模式) · [安装](#安装) · [使用方式](#用户应该如何使用它) · [输出结果](#示例输出) · [文档](#文档)
+[概述](#这个项目是什么) · [能力](#当前能力) · [研究模式](#研究模式) · [安装](#-安装) · [使用方式](#-使用方式) · [效果示例](#-效果示例) · [输出结果](#示例输出) · [文档](#文档)
 
 [**English**](../../README.md) · [**中文**](README_ZH.md)
 
@@ -63,6 +63,15 @@
 - “我想结构化复盘一次面试，而不是只靠印象。”
 - “我希望能结合外部趋势信号，但结论仍然扎根在候选人的真实材料上。”
 
+## 🔧 特性
+
+- **双视角**：支持 `candidate`、`interviewer`、`dual`
+- **case 化工作流**：围绕同一份简历、JD、项目说明、面试记录持续复用
+- **四个工作流**：`project-highlight`、`resume-eval`、`mock-interview`、`interview-retro`
+- **三种研究模式**：`local-only`、`web-assisted`、`deep-research`
+- **持久化输出**：所有分析都会写回 case 目录
+- **版本备份与回滚**：更新前可备份，出问题可恢复
+
 ## 当前能力
 
 | 工作流 | 作用 | 常见输入 | 输出 |
@@ -87,7 +96,37 @@
 - [Workflow Status](../../references/workflow-status.md)
 - [Research Status](../../references/research-status.md)
 
-## 用户应该如何使用它
+---
+
+## ⚡ 安装
+
+如果你的 AI 宿主支持从包含 `SKILL.md` 的目录里自动发现 Skill，最简单的方式是直接让 AI 从仓库 URL 安装。
+
+示例提示词：
+
+```text
+Install the offer-skill skill for me: https://github.com/lmqvq/offer-skill
+```
+
+如果宿主不支持 repo 驱动安装，也可以手工 clone 到 skills 目录：
+
+```bash
+git clone https://github.com/lmqvq/offer-skill.git <YOUR_SKILLS_DIR>/offer-skill
+```
+
+常见示例：
+
+| 宿主 | 常见 skill 路径 |
+|---|---|
+| Codex | `~/.codex/skills/offer-skill` |
+| Claude Code | `~/.claude/skills/offer-skill` |
+| OpenClaw | `~/.openclaw/workspace/skills/offer-skill` |
+
+安装完成后，通过 AI 工具按名字调用即可。
+
+---
+
+## 🚀 使用方式
 
 正常用户不应该手工跑一堆脚本，而应该 **直接对 AI 工具说话**。
 
@@ -110,18 +149,6 @@ AI 工具在背后应该自动完成：
 - 执行对应工作流
 - 将结果写入 `cases/{case_slug}/`
 
-## 安装
-
-如果你的宿主工具会从包含 `SKILL.md` 的目录里自动发现 Skill，可以直接把仓库 clone 到对应 skills 目录。
-
-示例：
-
-```bash
-git clone https://github.com/lmqvq/offer-skill.git <YOUR_SKILLS_DIR>/offer-skill
-```
-
-之后通过 AI 工具按名字调用即可。
-
 ### AI 优先调用方式
 
 示例：
@@ -134,7 +161,7 @@ Use $offer-skill to extract project highlights from this project description for
 Use $offer-skill to create a mock interview from this JD with deep-research enabled.
 ```
 
-## 一次调用统一入口
+### 一次调用统一入口
 
 仓库内部推荐通过一个统一入口脚本执行：
 
@@ -162,6 +189,72 @@ python scripts/offer_skill.py \
   --projects-file ./projects.md \
   --research-profile web-assisted \
   --research-file ./market_notes.md
+```
+
+---
+
+## ✨ 效果示例
+
+三个典型场景。
+
+### 1. 候选人侧 `resume-eval`
+
+> 输入：简历 + 后端岗位 JD
+
+```text
+User         ❯ Use $offer-skill to evaluate my resume against this JD from the candidate perspective.
+
+offer-skill  ❯ Overall match: medium
+               Strong matches:
+               - Java backend development
+               - Redis latency optimization with measurable results
+
+               Weak matches:
+               - Kafka appears in the skill list, but project evidence is thin
+
+               Candidate suggestions:
+               - Add one concrete Kafka project story
+               - Move quantified outcomes closer to the top of the resume
+```
+
+### 2. 面试官侧 `project-highlight`
+
+> 输入：某个项目的说明材料
+
+```text
+User         ❯ Use $offer-skill to extract project highlights from this project note from the interviewer perspective.
+
+offer-skill  ❯ Candidate view:
+               - Strong ownership signal around feed write-path refactor
+
+               Interviewer view:
+               - Good Redis signal, but cache consistency handling should be verified
+
+               Suggested questions:
+               - What was the hardest consistency tradeoff?
+               - If traffic grew 10x, what would fail first?
+```
+
+### 3. 带研究信号的 `mock-interview`
+
+> 输入：JD + 简历 + 项目材料 + 可选外部面试资料
+
+```text
+User         ❯ Use $offer-skill to create a mock interview from this JD with deep-research enabled.
+
+offer-skill  ❯ Interview setup:
+               - Perspective: candidate
+               - Research profile: deep-research
+
+               Question list:
+               - How do you design cache consistency under high concurrency?
+               - What tradeoffs did you make in your Redis invalidation strategy?
+               - How would you scale this service if QPS increased sharply?
+
+               Research signals:
+               - cache consistency
+               - distributed systems
+               - Redis tradeoff questions
 ```
 
 ## 底层开发者调试流
