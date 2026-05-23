@@ -238,10 +238,6 @@ offer-skill  ❯ Interview setup:
                - Redis tradeoff questions
 ```
 
-### Lower-level developer flow
-
-If you want to debug the system step by step, the lower-level scripts are still available.
-
 ## Lower-Level Developer Flow
 
 If you want to debug the system step by step, the lower-level scripts are still available.
