@@ -21,4 +21,6 @@ This file exists to prevent scope drift and accidental roadmap erasure.
 
 - State clearly that `v0.1` does not perform live web research.
 - Keep deferred workflows visible in docs and presets.
+- Keep deferred research profiles visible in docs and presets.
 - Do not rename deferred workflows away just because they are not implemented yet.
+- Do not rename deferred research profiles away just because they are not implemented yet.

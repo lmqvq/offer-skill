@@ -21,6 +21,12 @@ The following items are intentionally **deferred**, not dropped:
 - `web-assisted` research
 - `deep-research`
 
+These items must remain present in:
+
+- `presets/workflows.json`
+- `presets/research-profiles.json`
+- deferred-capability documentation
+
 Any contributor touching scope, presets, or docs should preserve this list.
 
 ## v0.2

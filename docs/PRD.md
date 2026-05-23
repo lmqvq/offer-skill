@@ -48,6 +48,12 @@ These items are planned and must remain visible:
 
 Do not delete or silently collapse these planned capabilities when evolving the repo.
 
+They must remain represented in:
+
+- workflow presets
+- research-profile presets
+- roadmap and deferred-capability docs
+
 ## Core Principles
 
 - Perspective changes emphasis, not facts

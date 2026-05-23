@@ -42,3 +42,8 @@ cases/{case_slug}/
 ## v0.1 Note
 
 `research` directories still exist in `v0.1` even though research workflows are deferred. Keep the folders to preserve forward compatibility.
+
+Research profile presets must still preserve:
+
+- `web-assisted`
+- `deep-research`

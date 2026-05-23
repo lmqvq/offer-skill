@@ -1,0 +1,23 @@
+{
+  "local-only": {
+    "display_name": "Local Only",
+    "status": "enabled",
+    "enabled_in_v0_1": true,
+    "purpose": "Use only user-provided local materials such as resumes, JDs, projects, and notes.",
+    "deferred_note": ""
+  },
+  "web-assisted": {
+    "display_name": "Web Assisted",
+    "status": "planned",
+    "enabled_in_v0_1": false,
+    "purpose": "Use sourced external materials to improve realism for future interview workflows.",
+    "deferred_note": "Planned after v0.1. Reserved for external, sourced interview material support."
+  },
+  "deep-research": {
+    "display_name": "Deep Research",
+    "status": "planned",
+    "enabled_in_v0_1": false,
+    "purpose": "Run deeper interview trend analysis by role, stack, company type, and source recency.",
+    "deferred_note": "Planned after v0.1. Reserved for deeper interview trend analysis."
+  }
+}

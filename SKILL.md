@@ -7,6 +7,25 @@ description: Analyze resumes, project experience, and interview notes from candi
 
 Offer Skill is a dual-perspective interview and hiring skill. Use it to turn local resume, JD, project, and interview materials into reusable case artifacts instead of one-off answers.
 
+## User-Facing Model
+
+The user should normally interact with this Skill through the host AI tool, not by manually running repository scripts.
+
+The scripts in this repository exist to support the Skill internally:
+
+- create cases
+- import local materials
+- run workflows
+- back up and restore artifacts
+
+When this Skill is invoked, the AI host should do the orchestration and prefer the unified entrypoint:
+
+```bash
+python scripts/offer_skill.py --workflow <resume-eval|project-highlight> --perspective <candidate|interviewer|dual> ...
+```
+
+Use the lower-level scripts only when debugging or testing.
+
 ## Operating Rules
 
 - Start by identifying the active perspective: `candidate`, `interviewer`, or `dual`.
@@ -14,6 +33,7 @@ Offer Skill is a dual-perspective interview and hiring skill. Use it to turn loc
 - In `v0.1`, execute only `project-highlight` and `resume-eval`.
 - In `v0.1`, use only local materials. Do not claim web research, live interview-trend coverage, or sourced high-frequency question discovery.
 - Preserve the roadmap: keep `mock-interview` and `interview-retro` visible as planned workflows, and keep web-assisted research visible as a planned capability.
+- Preserve the research profile roadmap: keep `web-assisted` and `deep-research` visible as planned research profiles.
 - Treat all outputs as case assets. Prefer writing or updating files under `cases/{case_slug}/` rather than leaving analysis only in chat.
 
 ## Workflow Decision Tree
@@ -22,6 +42,12 @@ Offer Skill is a dual-perspective interview and hiring skill. Use it to turn loc
 2. If the user wants to compare a resume against a target role or JD, use `resume-eval`.
 3. If the user asks for a realistic mock interview flow, explain that `mock-interview` is planned after `v0.1`.
 4. If the user asks to review past interview performance, explain that `interview-retro` is planned after `v0.1`.
+
+## Typical Requests
+
+- `Use $offer-skill to evaluate this resume against the attached JD from the interviewer perspective.`
+- `Use $offer-skill to extract project highlights from this project note from the candidate perspective.`
+- `Use $offer-skill to compare candidate and interviewer views of this project.`
 
 ## v0.1 Scope
 
@@ -44,34 +70,42 @@ Explicitly deferred after `v0.1`:
 ## Case Workflow
 
 1. Read the user's local materials.
-2. Create or reuse a case directory under `cases/{case_slug}/`.
-3. If no case exists, run:
+2. Prefer the unified entrypoint for normal Skill execution:
+
+```bash
+python scripts/offer_skill.py \
+  --workflow <resume-eval|project-highlight> \
+  --perspective <candidate|interviewer|dual> \
+  --display-name "<name>" \
+  --resume-file <path> \
+  --jd-file <path> \
+  --projects-file <path>
+```
+
+3. Let the unified entrypoint automatically:
+
+- create or reuse the case
+- import the provided materials
+- run the selected workflow
+- write outputs under `cases/{case_slug}/`
+
+4. Use the lower-level scripts only when needed for debugging:
 
 ```bash
 python scripts/create_case.py --case-slug <slug> --display-name "<name>" --perspective <candidate|interviewer|dual>
-```
-
-4. Import materials with:
-
-```bash
 python scripts/import_material.py --case-slug <slug> --material-type <resume|jd|projects> --from-file <path>
-```
-
-5. Run the supported v0.1 workflow:
-
-```bash
 python scripts/run_workflow.py --case-slug <slug> --workflow <resume-eval|project-highlight>
 ```
 
-6. Generate normalized or derived artifacts as they become available.
-7. Write the final Markdown output under `analyses/`.
-8. Before risky updates, run:
+5. Generate normalized or derived artifacts as they become available.
+6. Write the final Markdown output under `analyses/`.
+7. Before risky updates, run:
 
 ```bash
 python scripts/version_manager.py --action backup --case-slug <slug>
 ```
 
-9. If needed, list or restore versions:
+8. If needed, list or restore versions:
 
 ```bash
 python scripts/version_manager.py --action list --case-slug <slug>
@@ -90,3 +124,4 @@ python scripts/version_manager.py --action rollback --case-slug <slug> --version
 
 - Read [references/schema-reference.md](references/schema-reference.md) for case structure and file contracts.
 - Read [references/workflow-status.md](references/workflow-status.md) for enabled and deferred workflow states.
+- Read [references/research-status.md](references/research-status.md) for enabled and deferred research profiles.

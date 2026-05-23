@@ -17,6 +17,21 @@ def load_material(args: argparse.Namespace) -> str:
     raise SystemExit("Provide --from-file or --text")
 
 
+def import_material(
+    *,
+    case_dir: Path,
+    material_type: str,
+    content: str,
+) -> Path:
+    target_path = input_path(case_dir, material_type)
+    write_text(target_path, content)
+
+    meta = load_meta(case_dir)
+    mark_input_present(meta, material_type)
+    save_meta(case_dir, meta)
+    return target_path
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Import a local material file into an offer-skill case")
     parser.add_argument("--case-slug", required=True)
@@ -28,12 +43,7 @@ def main() -> None:
 
     case_dir = resolve_case_dir(args.cases_root, args.case_slug)
     content = load_material(args)
-    target_path = input_path(case_dir, args.material_type)
-    write_text(target_path, content)
-
-    meta = load_meta(case_dir)
-    mark_input_present(meta, args.material_type)
-    save_meta(case_dir, meta)
+    target_path = import_material(case_dir=case_dir, material_type=args.material_type, content=content)
     print(target_path)
 
 

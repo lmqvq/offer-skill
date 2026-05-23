@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from argparse import Namespace
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -48,6 +49,7 @@ def build_meta(args: argparse.Namespace) -> dict:
         },
         "research": {
             "profile": "local-only",
+            "available_profiles": ["local-only", "web-assisted", "deep-research"],
             "sources_count": 0,
             "last_updated_at": None,
             "enabled_in_v0_1": False,
@@ -108,6 +110,10 @@ def build_manifest(meta: dict) -> dict:
         ],
         "v0_1_enabled_capabilities": ["project-highlight", "resume-eval"],
         "deferred_capabilities": ["mock-interview", "interview-retro", "web-assisted-research"],
+        "research_profiles": {
+            "enabled_in_v0_1": ["local-only"],
+            "deferred_after_v0_1": ["web-assisted", "deep-research"]
+        },
     }
 
 
@@ -161,6 +167,32 @@ def create_case(args: argparse.Namespace) -> Path:
         encoding="utf-8",
     )
     return case_dir
+
+
+def create_case_from_values(
+    *,
+    case_slug: str,
+    display_name: str,
+    perspective: str,
+    cases_root: str = "cases",
+    summary: str | None = None,
+    role_title: str | None = None,
+    level: str | None = None,
+    company_type: str | None = None,
+    stack: str | None = None,
+) -> Path:
+    args = Namespace(
+        case_slug=case_slug,
+        display_name=display_name,
+        perspective=perspective,
+        cases_root=cases_root,
+        summary=summary,
+        role_title=role_title,
+        level=level,
+        company_type=company_type,
+        stack=stack,
+    )
+    return create_case(args)
 
 
 def main() -> None:

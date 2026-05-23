@@ -18,12 +18,14 @@ user intent
 - `scripts/version_manager.py`
 - `presets/perspectives.json`
 - `presets/workflows.json`
+- `presets/research-profiles.json`
 
 ## Deferred Modules After v0.1
 
 - mock interview generation
 - interview retrospective builder
 - web-assisted research pipeline
+- deep-research interview trend analysis
 
 These are deferred, not removed.
 

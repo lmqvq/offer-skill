@@ -8,6 +8,37 @@ It is designed around one core idea:
 
 > turn interview-related materials into reusable case artifacts, not one-off answers
 
+## How Users Should Actually Use It
+
+The normal usage model is:
+
+1. install `offer-skill` into your AI tool's skill directory
+2. ask the AI tool to use `offer-skill`
+3. let the AI read your local resume / JD / project files
+4. let the AI call the internal scripts for case creation, import, and workflow execution
+
+In other words:
+
+- end users should mainly talk to the AI tool
+- the scripts in this repo are internal implementation details
+- those scripts exist so the Skill can persist cases, version artifacts, and produce deterministic outputs
+
+### Typical user requests
+
+Candidate-side:
+
+- `Use $offer-skill to evaluate my resume against this JD from the candidate perspective.`
+- `Use $offer-skill to extract project highlights from my backend project notes.`
+
+Interviewer-side:
+
+- `Use $offer-skill to review this resume against the JD from the interviewer perspective.`
+- `Use $offer-skill to identify weak evidence and generate follow-up questions for this candidate's project experience.`
+
+Dual perspective:
+
+- `Use $offer-skill to compare how a candidate would present this project and how an interviewer would challenge it.`
+
 ## Why This Exists
 
 Most interview helpers only solve one slice of the problem:
@@ -74,6 +105,47 @@ offer-skill/
 
 ## Quick Start
 
+## AI-First Usage
+
+If your host supports Skills, the preferred experience is to install `offer-skill` and invoke it through the AI tool.
+
+Examples:
+
+```text
+Use $offer-skill to evaluate this resume against the attached JD from the interviewer perspective.
+
+Use $offer-skill to extract project highlights from this project description for a backend engineer role.
+```
+
+The AI should then:
+
+- create or reuse a case
+- import the local materials
+- run the right workflow
+- save outputs under `cases/{case_slug}/`
+
+Internally, the preferred entrypoint is:
+
+```bash
+python scripts/offer_skill.py --workflow <resume-eval|project-highlight> ...
+```
+
+## Developer / Internal Usage
+
+Run the full `v0.1` flow in one call:
+
+```bash
+python scripts/offer_skill.py \
+  --workflow resume-eval \
+  --perspective interviewer \
+  --display-name "Backend Resume Review" \
+  --resume-file ./resume.md \
+  --jd-file ./jd.md \
+  --projects-file ./projects.md
+```
+
+If you need lower-level debugging, you can still call the internal scripts separately.
+
 Create a new case:
 
 ```bash
@@ -138,6 +210,7 @@ python scripts/version_manager.py --action rollback --case-slug backend-java-soc
 - [PRD](docs/PRD.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Roadmap](docs/ROADMAP.md)
+- [Deferred Capabilities](docs/DEFERRED_CAPABILITIES.md)
 
 ## Safety and Boundaries
 

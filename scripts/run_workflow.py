@@ -95,6 +95,16 @@ def run_project_highlight(case_dir, meta: dict) -> str:
     return str(output_path)
 
 
+def execute_workflow(case_dir, meta: dict, workflow: str) -> str:
+    if workflow in DEFERRED:
+        raise ValueError(DEFERRED[workflow])
+    if workflow not in SUPPORTED_V0_1:
+        raise ValueError(f"unsupported workflow: {workflow}")
+    if workflow == "resume-eval":
+        return run_resume_eval(case_dir, meta)
+    return run_project_highlight(case_dir, meta)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run an offer-skill workflow for a case")
     parser.add_argument("--case-slug", required=True)
@@ -104,16 +114,10 @@ def main() -> None:
 
     case_dir = resolve_case_dir(args.cases_root, args.case_slug)
     meta = load_meta(case_dir)
-
-    if args.workflow in DEFERRED:
-        raise SystemExit(DEFERRED[args.workflow])
-    if args.workflow not in SUPPORTED_V0_1:
-        raise SystemExit(f"unsupported workflow: {args.workflow}")
-
-    if args.workflow == "resume-eval":
-        output = run_resume_eval(case_dir, meta)
-    else:
-        output = run_project_highlight(case_dir, meta)
+    try:
+        output = execute_workflow(case_dir, meta, args.workflow)
+    except ValueError as exc:
+        raise SystemExit(str(exc))
 
     append_workflow_history(meta, args.workflow)
     save_meta(case_dir, meta)
