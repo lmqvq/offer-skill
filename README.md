@@ -28,6 +28,10 @@ In one line:
 
 > Resume + JD + project notes + interview notes -> structured case -> reusable hiring analysis
 
+<div align="center">
+  <img src="docs/assets/offer-skill-workflow.svg" alt="offer-skill workflow diagram" width="100%">
+</div>
+
 ## What This Project Is
 
 `offer-skill` is not just a prompt collection.

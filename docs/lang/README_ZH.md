@@ -28,6 +28,10 @@
 
 > 简历 + JD + 项目材料 + 面试记录 -> 结构化 case -> 可复用的求职招聘分析
 
+<div align="center">
+  <img src="../assets/offer-skill-workflow.svg" alt="offer-skill 工作流示意图" width="100%">
+</div>
+
 ## 这个项目是什么
 
 `offer-skill` 不是简单的 prompt 集合。
