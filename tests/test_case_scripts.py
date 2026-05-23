@@ -107,3 +107,151 @@ class OfferSkillScriptsTest(unittest.TestCase):
             restored_meta = json.loads(meta_path.read_text(encoding="utf-8"))
             self.assertTrue(restored_meta["lifecycle"]["version"].startswith("v1"))
 
+    def test_import_material_and_run_resume_eval_workflow(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            cases_root = Path(tmp_dir) / "cases"
+            self.run_cmd(
+                str(PYTHON),
+                str(ROOT / "scripts" / "create_case.py"),
+                "--case-slug",
+                "resume-eval-case",
+                "--display-name",
+                "Resume Eval Case",
+                "--perspective",
+                "candidate",
+                "--cases-root",
+                str(cases_root),
+            )
+
+            resume_src = Path(tmp_dir) / "resume.md"
+            jd_src = Path(tmp_dir) / "jd.md"
+            projects_src = Path(tmp_dir) / "projects.md"
+            resume_src.write_text(
+                "# Resume\n"
+                "## Experience\n"
+                "- Built Java backend services for order processing.\n"
+                "- Optimized Redis cache hit rate by 25%.\n"
+                "## Skills\n"
+                "- Java, Redis, Kafka, MySQL\n",
+                encoding="utf-8",
+            )
+            jd_src.write_text(
+                "# Backend Engineer\n"
+                "- Required: Strong Java backend development experience\n"
+                "- Required: Familiar with Redis and Kafka\n"
+                "- Preferred: Experience with distributed systems\n",
+                encoding="utf-8",
+            )
+            projects_src.write_text(
+                "# Order Platform\n"
+                "- 负责订单服务重构，设计 Redis 缓存方案。\n"
+                "- 将核心接口延迟降低 30ms。\n"
+                "- 处理高峰流量下的缓存一致性问题。\n",
+                encoding="utf-8",
+            )
+
+            for material_type, src in (
+                ("resume", resume_src),
+                ("jd", jd_src),
+                ("projects", projects_src),
+            ):
+                self.run_cmd(
+                    str(PYTHON),
+                    str(ROOT / "scripts" / "import_material.py"),
+                    "--case-slug",
+                    "resume-eval-case",
+                    "--material-type",
+                    material_type,
+                    "--cases-root",
+                    str(cases_root),
+                    "--from-file",
+                    str(src),
+                )
+
+            workflow = self.run_cmd(
+                str(PYTHON),
+                str(ROOT / "scripts" / "run_workflow.py"),
+                "--case-slug",
+                "resume-eval-case",
+                "--workflow",
+                "resume-eval",
+                "--cases-root",
+                str(cases_root),
+            )
+
+            output_path = Path(workflow.stdout.strip())
+            self.assertTrue(output_path.exists())
+            content = output_path.read_text(encoding="utf-8")
+            self.assertIn("# Resume Evaluation", content)
+            self.assertIn("Overall match", content)
+            self.assertTrue((cases_root / "resume-eval-case" / "derived" / "jd_match.json").exists())
+
+    def test_run_project_highlight_and_deferred_workflow_guard(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            cases_root = Path(tmp_dir) / "cases"
+            self.run_cmd(
+                str(PYTHON),
+                str(ROOT / "scripts" / "create_case.py"),
+                "--case-slug",
+                "project-case",
+                "--display-name",
+                "Project Case",
+                "--perspective",
+                "dual",
+                "--cases-root",
+                str(cases_root),
+            )
+
+            projects_src = Path(tmp_dir) / "projects.md"
+            projects_src.write_text(
+                "# Feed Service\n"
+                "- 主导 Feed 写入链路重构。\n"
+                "- 使用 Redis 降低热点读取延迟 40ms。\n"
+                "- 解决高并发场景下的缓存一致性问题。\n",
+                encoding="utf-8",
+            )
+
+            self.run_cmd(
+                str(PYTHON),
+                str(ROOT / "scripts" / "import_material.py"),
+                "--case-slug",
+                "project-case",
+                "--material-type",
+                "projects",
+                "--cases-root",
+                str(cases_root),
+                "--from-file",
+                str(projects_src),
+            )
+
+            workflow = self.run_cmd(
+                str(PYTHON),
+                str(ROOT / "scripts" / "run_workflow.py"),
+                "--case-slug",
+                "project-case",
+                "--workflow",
+                "project-highlight",
+                "--cases-root",
+                str(cases_root),
+            )
+            output_path = Path(workflow.stdout.strip())
+            self.assertTrue(output_path.exists())
+            self.assertIn("# Project Highlight", output_path.read_text(encoding="utf-8"))
+
+            deferred = subprocess.run(
+                [
+                    str(PYTHON),
+                    str(ROOT / "scripts" / "run_workflow.py"),
+                    "--case-slug",
+                    "project-case",
+                    "--workflow",
+                    "mock-interview",
+                    "--cases-root",
+                    str(cases_root),
+                ],
+                cwd=ROOT.parent,
+                text=True,
+                capture_output=True,
+            )
+            self.assertNotEqual(deferred.returncode, 0)
+            self.assertIn("planned after v0.1", deferred.stderr + deferred.stdout)

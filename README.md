@@ -84,6 +84,37 @@ python scripts/create_case.py \
   --role-title "Backend Engineer"
 ```
 
+Import local materials:
+
+```bash
+python scripts/import_material.py \
+  --case-slug backend-java-social \
+  --material-type resume \
+  --from-file ./resume.md
+
+python scripts/import_material.py \
+  --case-slug backend-java-social \
+  --material-type jd \
+  --from-file ./jd.md
+
+python scripts/import_material.py \
+  --case-slug backend-java-social \
+  --material-type projects \
+  --from-file ./projects.md
+```
+
+Run a v0.1 workflow:
+
+```bash
+python scripts/run_workflow.py \
+  --case-slug backend-java-social \
+  --workflow resume-eval
+
+python scripts/run_workflow.py \
+  --case-slug backend-java-social \
+  --workflow project-highlight
+```
+
 Back up the case before changes:
 
 ```bash

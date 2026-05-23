@@ -18,6 +18,21 @@ python scripts/create_case.py \
   --perspective candidate
 ```
 
+Import local files into the case:
+
+```bash
+python scripts/import_material.py --case-slug my-first-case --material-type resume --from-file ./resume.md
+python scripts/import_material.py --case-slug my-first-case --material-type jd --from-file ./jd.md
+python scripts/import_material.py --case-slug my-first-case --material-type projects --from-file ./projects.md
+```
+
+Run a supported workflow:
+
+```bash
+python scripts/run_workflow.py --case-slug my-first-case --workflow resume-eval
+python scripts/run_workflow.py --case-slug my-first-case --workflow project-highlight
+```
+
 Run tests from the repository parent directory on this machine:
 
 ```bash
@@ -37,4 +52,3 @@ These are deferred:
 - `interview-retro`
 - `web-assisted` research
 - `deep-research`
-

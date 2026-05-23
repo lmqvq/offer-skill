@@ -51,16 +51,27 @@ Explicitly deferred after `v0.1`:
 python scripts/create_case.py --case-slug <slug> --display-name "<name>" --perspective <candidate|interviewer|dual>
 ```
 
-4. Place raw text inputs under `inputs/`.
-5. Generate normalized or derived artifacts as they become available.
-6. Write the final Markdown output under `analyses/`.
-7. Before risky updates, run:
+4. Import materials with:
+
+```bash
+python scripts/import_material.py --case-slug <slug> --material-type <resume|jd|projects> --from-file <path>
+```
+
+5. Run the supported v0.1 workflow:
+
+```bash
+python scripts/run_workflow.py --case-slug <slug> --workflow <resume-eval|project-highlight>
+```
+
+6. Generate normalized or derived artifacts as they become available.
+7. Write the final Markdown output under `analyses/`.
+8. Before risky updates, run:
 
 ```bash
 python scripts/version_manager.py --action backup --case-slug <slug>
 ```
 
-8. If needed, list or restore versions:
+9. If needed, list or restore versions:
 
 ```bash
 python scripts/version_manager.py --action list --case-slug <slug>
